@@ -242,6 +242,8 @@ int main(int argc, char** argv) {
         mutacion(poblacion, padres,preferencias);
         
         //invercion
+        
+        
         cout<<"GeneraPoblacion"<<cont<<endl;
         generarpoblacion(poblacion, preferencias);
         //muestrapoblacion(poblacion,preferencias);
