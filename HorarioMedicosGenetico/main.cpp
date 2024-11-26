@@ -20,7 +20,7 @@
 #define NIND 10
 #define Tseleccion 0.3
 #define Pcasamiento 0.5
-#define NITERACIONES 10
+#define NITERACIONES 1000
 #define Tmutacion 0.5
 #define NDias 7
 #define NTurnos 4
@@ -50,7 +50,7 @@ void generaHorario(vector <int> &vaux, int n) {
 int calculafitness(vector<int> cromo,map<int, vector<int>> preferencias) {
     int fitness=0;
     int idMedico=0;
-    for (int i = 7; i < cromo.size(); i += 7) {
+    for (int i = NDias; i < cromo.size(); i += NDias) {
         const auto& horario = vector<int>(cromo.begin() + i + 1, cromo.begin() + i + 8); // Horario del médico
 
         // Verificar si el médico tiene preferencias definidas
@@ -73,7 +73,7 @@ int calculafitness(vector<int> cromo,map<int, vector<int>> preferencias) {
     // Penalización por turnos consecutivos de noche y mañana
     
     for (int dia = 0; dia < cromo.size(); dia++) {
-        if ((dia+1) % 7 != 0 and dia!=0) {
+        if ((dia+1) % NDias != 0 and dia!=0) {
             if (cromo[dia] == 3 && cromo[dia+1] == 1) {
                 fitness -= PenalizacionNocheManana; // Penalización más alta   factor de k;
             }
@@ -103,7 +103,7 @@ void muestrapoblacion(vector<vector<int>>poblacion,map<int, vector<int>> prefere
 
     for (int i = 0; i < poblacion.size(); i++) {
         for (int j = 0; j < poblacion[i].size(); j++) {;
-            if (j % 7 == 0) cout << "Medico  ->  ";
+            if (j % NDias == 0) cout << "Medico  ->  ";
             cout << poblacion[i][j] << "  ";
         }
         cout<<"fit: "<<calculafitness(poblacion[i],preferencias);
@@ -172,10 +172,10 @@ void mutacion(vector<vector<int>>padres, vector<vector<int>>&poblacion, map<int,
     int cont = 0;
     int nmuta = round(padres.size() * Tmutacion);
     while (cont < nmuta) {
-        for (int i = 0; i < 7; ++i) {
+        for (int i = 0; i < NDias; ++i) {
             if (rand() % 2 == 0) { 
-                int pos = rand() % 7; 
-                padres[cont][i * 7 + pos] = rand()%NTurnos;
+                int pos = rand() % NDias; 
+                padres[cont][i * NDias + pos] = rand()%NTurnos;
             }
         }
    
@@ -242,6 +242,7 @@ int main(int argc, char** argv) {
         mutacion(poblacion, padres,preferencias);
         //invercion
         generarpoblacion(poblacion, preferencias);
+        //muestrapoblacion(poblacion,preferencias);
         muestramejor(poblacion, preferencias);
         cont++;
         if (cont == NITERACIONES) break;
