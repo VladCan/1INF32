@@ -196,8 +196,6 @@ bool compara(vector<int>a, vector<int>b) {
 }
 
 void generarpoblacion(vector<vector<int>> &poblacion,map<int, vector<int>> preferencias) {
-
-    Gpreferencias = preferencias;
     sort(poblacion.begin(), poblacion.end(), compara);
     poblacion.erase(poblacion.begin() + NIND, poblacion.end());
 
@@ -233,16 +231,22 @@ int main(int argc, char** argv) {
     preferencias[3] = {0, 0, 0, 3, 1, 2, 3};
     generapoblacioninicial(poblacion);
     muestrapoblacion(poblacion,preferencias);
+    Gpreferencias=preferencias;
    
     while(true){
         vector<vector<int>> padres;
         seleccion(padres, poblacion, preferencias);
         casamiento(padres, poblacion, preferencias);
         cout << endl;
+        cout<<"Mutacion"<<cont<<endl;
         mutacion(poblacion, padres,preferencias);
+        
         //invercion
+        cout<<"GeneraPoblacion"<<cont<<endl;
         generarpoblacion(poblacion, preferencias);
         //muestrapoblacion(poblacion,preferencias);
+        
+        cout<<"Merjor"<<cont<<endl;
         muestramejor(poblacion, preferencias);
         cont++;
         if (cont == NITERACIONES) break;
