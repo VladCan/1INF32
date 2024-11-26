@@ -17,10 +17,10 @@
 #include <cmath>
 #include <map>
 #include <algorithm>
-#define NIND 10
+#define NIND 15
 #define Tseleccion 0.3
 #define Pcasamiento 0.5
-#define NITERACIONES 1000
+#define NITERACIONES 500
 #define Tmutacion 0.5
 #define NDias 7
 #define NTurnos 4
@@ -243,13 +243,13 @@ int main(int argc, char** argv) {
     vector<vector<int>> poblacion;
     map<int, vector<int>> preferencias;
     // Médico 0: No trabajar lunes, martes, miércoles; jueves mañana, viernes tarde, sábado noche, domingo tarde
-    preferencias[0] = {0, 0, 0, 1, 2, 3, 2};
+    preferencias[0] = {0, 3, 0, 1, 2, 3, 2};
     // Médico 1: Prefiere trabajar lunes y martes por la mañana, miércoles tarde, jueves tarde, viernes noche, no sábado ni domingo
     preferencias[1] = {1, 1, 2, 2, 3, 0, 0};
     // Médico 2: Prefiere no trabajar lunes, martes noche, miércoles mañana, jueves no trabaja, viernes tarde, sábado noche, domingo mañana
-    preferencias[2] = {0, 3, 1, 0, 2, 3, 1};
+    preferencias[2] = {2, 3, 2, 0, 2, 3, 1};
     // Médico 3: Prefiere no trabajar lunes, martes y miércoles; jueves noche, viernes mañana, sábado tarde, domingo noche
-    preferencias[3] = {0, 0, 0, 3, 1, 2, 3};
+    preferencias[3] = {3, 0, 1, 3, 3, 2, 3};
     generapoblacioninicial(poblacion);
     muestrapoblacion(poblacion, preferencias);
     Gpreferencias = preferencias;
@@ -263,17 +263,14 @@ int main(int argc, char** argv) {
         mutacion(poblacion, padres, preferencias);
 
         //invercion
-
         inversion(poblacion, padres);
-
-
         //cout<<"GeneraPoblacion"<<cont<<endl;
         generarpoblacion(poblacion, preferencias);
         //muestrapoblacion(poblacion,preferencias);
 
         //cout<<"Merjor"<<cont<<endl;
         muestramejor(poblacion, preferencias);
-        cont++;
+        cout<<cont++;
         if (cont == NITERACIONES) break;
     }
 
