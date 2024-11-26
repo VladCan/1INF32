@@ -47,9 +47,9 @@ void generaHorario(vector <int> &vaux, int n) {
 
 //, vector<vector<int>> Vrequisitos
 
-int calculafitness(vector<int> cromo,map<int, vector<int>> preferencias) {
-    int fitness=0;
-    int idMedico=0;
+int calculafitness(vector<int> cromo, map<int, vector<int>> preferencias) {
+    int fitness = 0;
+    int idMedico = 0;
     for (int i = NDias; i < cromo.size(); i += NDias) {
         const auto& horario = vector<int>(cromo.begin() + i + 1, cromo.begin() + i + 8); // Horario del médico
 
@@ -68,13 +68,13 @@ int calculafitness(vector<int> cromo,map<int, vector<int>> preferencias) {
         idMedico++;
     }
 
-    
-   
+
+
     // Penalización por turnos consecutivos de noche y mañana
-    
+
     for (int dia = 0; dia < cromo.size(); dia++) {
-        if ((dia+1) % NDias != 0 and dia!=0) {
-            if (cromo[dia] == 3 && cromo[dia+1] == 1) {
+        if ((dia + 1) % NDias != 0 and dia != 0) {
+            if (cromo[dia] == 3 && cromo[dia + 1] == 1) {
                 fitness -= PenalizacionNocheManana; // Penalización más alta   factor de k;
             }
         }
@@ -99,14 +99,15 @@ void generapoblacioninicial(vector<vector<int>> &poblacion) {
 
 }
 
-void muestrapoblacion(vector<vector<int>>poblacion,map<int, vector<int>> preferencias) {
+void muestrapoblacion(vector<vector<int>>poblacion, map<int, vector<int>> preferencias) {
 
     for (int i = 0; i < poblacion.size(); i++) {
-        for (int j = 0; j < poblacion[i].size(); j++) {;
+        for (int j = 0; j < poblacion[i].size(); j++) {
+            ;
             if (j % NDias == 0) cout << "Medico  ->  ";
             cout << poblacion[i][j] << "  ";
         }
-        cout<<"fit: "<<calculafitness(poblacion[i],preferencias);
+        cout << "fit: " << calculafitness(poblacion[i], preferencias);
         cout << endl;
     }
 }
@@ -128,13 +129,12 @@ void cargaruleta(vector<int>supervivencia, int *ruleta) {
             ruleta[ind++] = i;
 }
 
-
 void seleccion(vector<vector<int>> &padres, vector<vector<int>>poblacion, map<int, vector<int>> preferencias) {
 
 
     int ruleta[100]{-1};
     vector<int>supervivencia;
-    calculasupervivencia(poblacion, supervivencia,preferencias);
+    calculasupervivencia(poblacion, supervivencia, preferencias);
     cargaruleta(supervivencia, ruleta);
     int nseleccionados = poblacion.size() * Tseleccion;
     for (int i = 0; i < nseleccionados; i++) {
@@ -144,7 +144,6 @@ void seleccion(vector<vector<int>> &padres, vector<vector<int>>poblacion, map<in
 
     }
 }
-
 
 void generahijo(vector<int>padre, vector<int>madre,
         vector<int>&hijo) {
@@ -156,7 +155,6 @@ void generahijo(vector<int>padre, vector<int>madre,
         hijo.push_back(madre[i]);
 }
 
-
 void casamiento(vector<vector<int>>padres, vector<vector<int>>&poblacion, map<int, vector<int>> preferencias) {
     for (int i = 0; i < padres.size(); i++)
         for (int j = 0; j < padres.size(); j++)
@@ -167,40 +165,63 @@ void casamiento(vector<vector<int>>padres, vector<vector<int>>&poblacion, map<in
             }
 }
 
+void inversion(vector<vector<int>>&poblacion, vector<vector<int>>padres) {
+    //
+    vector<int> cromo;
+    for (int i = 0; i < padres.size(); i++) {
+        vector<int> cromo = padres[i];
+        reverse(cromo.begin(), cromo.end());
+        poblacion.push_back(cromo);
+        cromo.clear();
+    }
+
+}
 
 void mutacion(vector<vector<int>>padres, vector<vector<int>>&poblacion, map<int, vector<int>> preferencias) {
     int cont = 0;
     int nmuta = round(padres.size() * Tmutacion);
     while (cont < nmuta) {
         for (int i = 0; i < NDias; ++i) {
-            if (rand() % 2 == 0) { 
-                int pos = rand() % NDias; 
-                padres[cont][i * NDias + pos] = rand()%NTurnos;
+            if (rand() % 2 == 0) {
+                int pos = rand() % NDias;
+                padres[cont][i * NDias + pos] = rand() % NTurnos;
             }
         }
-   
+
         poblacion.push_back(padres[cont]);
         cont++;
     }
 }
 
-
 bool compara(vector<int>a, vector<int>b) {
+
+
+    //cout<<"Compara"<<endl;
+
     int suma = 0, sumb = 0;
+    /*
+    suma+=(calculafitness(a,Gpreferencias)*a.size());
+            
+    sumb += (calculafitness(b,Gpreferencias)*b.size());
+     */
 
     for (int i = 0; i < a.size(); i++)
         suma += calculafitness(a, Gpreferencias);
     for (int i = 0; i < b.size(); i++)
         sumb += calculafitness(b, Gpreferencias);
+
+
     return suma>sumb;
 }
 
-void generarpoblacion(vector<vector<int>> &poblacion,map<int, vector<int>> preferencias) {
+void generarpoblacion(vector<vector<int>> &poblacion, map<int, vector<int>> preferencias) {
+
+    //cout<<"Antes del Sort"<<endl;
     sort(poblacion.begin(), poblacion.end(), compara);
+    //cout<<"Despues del Sort"<<endl;
     poblacion.erase(poblacion.begin() + NIND, poblacion.end());
 
 }
-
 
 int muestramejor(vector<vector<int>> poblacion, map<int, vector<int>> preferencias) {
     int mejor = 0;
@@ -230,25 +251,27 @@ int main(int argc, char** argv) {
     // Médico 3: Prefiere no trabajar lunes, martes y miércoles; jueves noche, viernes mañana, sábado tarde, domingo noche
     preferencias[3] = {0, 0, 0, 3, 1, 2, 3};
     generapoblacioninicial(poblacion);
-    muestrapoblacion(poblacion,preferencias);
-    Gpreferencias=preferencias;
-   
-    while(true){
+    muestrapoblacion(poblacion, preferencias);
+    Gpreferencias = preferencias;
+
+    while (true) {
         vector<vector<int>> padres;
         seleccion(padres, poblacion, preferencias);
         casamiento(padres, poblacion, preferencias);
         cout << endl;
-        cout<<"Mutacion"<<cont<<endl;
-        mutacion(poblacion, padres,preferencias);
-        
+        //cout<<"Mutacion"<<cont<<endl;
+        mutacion(poblacion, padres, preferencias);
+
         //invercion
-        
-        
-        cout<<"GeneraPoblacion"<<cont<<endl;
+
+        inversion(poblacion, padres);
+
+
+        //cout<<"GeneraPoblacion"<<cont<<endl;
         generarpoblacion(poblacion, preferencias);
         //muestrapoblacion(poblacion,preferencias);
-        
-        cout<<"Merjor"<<cont<<endl;
+
+        //cout<<"Merjor"<<cont<<endl;
         muestramejor(poblacion, preferencias);
         cont++;
         if (cont == NITERACIONES) break;
