@@ -44,6 +44,32 @@ void generaHorario(vector <int> &vaux, int n) {
 
 //, vector<vector<int>> Vrequisitos
 
+int calcularFitnessHorario(vector<int> cromo) {
+    int fitness=0;
+    
+    
+    //Lunes Mañana Martes noche
+    for (int dia = 1; dia < cromo.size(); ++dia) {
+        if (dia % 8 != 0) {
+            if (cromo[dia] == 1 && cromo[dia+1] == 3) {
+                fitness += 2; 
+            }
+        }
+
+    }
+    // Penalización por turnos consecutivos de noche y mañana
+    
+    for (int dia = 1; dia < cromo.size(); ++dia) {
+        if (dia % 8 != 0) {
+            if (cromo[dia] == 3 && cromo[dia+1] == 1) {
+                fitness -= 2; // Penalización más alta
+            }
+        }
+
+    }
+    return fitness;
+}
+
 void generapoblacioninicial(vector<vector<int>> &poblacion) {
     int cont = 0;
 
@@ -68,25 +94,26 @@ void generapoblacioninicial(vector<vector<int>> &poblacion) {
 void muestrapoblacion(vector<vector<int>>poblacion) {
 
     for (int i = 0; i < poblacion.size(); i++) {
-        for (int j = 0; j < poblacion[i].size(); j++) {
-            if(j%8==0) cout<<"Medico";
+        for (int j = 0; j < poblacion[i].size(); j++) {;
+            if (j % 8 == 0) cout << "Medico";
             cout << poblacion[i][j] << "  ";
         }
-        cout<<endl;
+        cout<<"fit: "<<calcularFitnessHorario(poblacion[i]);
+        cout << endl;
     }
 }
 
-    int main(int argc, char** argv) {
+int main(int argc, char** argv) {
 
-        int cont = 0;
-        vector<vector<int>> poblacion;
-
-
-        generapoblacioninicial(poblacion);
+    int cont = 0;
+    vector<vector<int>> poblacion;
 
 
-        muestrapoblacion(poblacion);
+    generapoblacioninicial(poblacion);
 
-        return 0;
-    }
+
+    muestrapoblacion(poblacion);
+
+    return 0;
+}
 
