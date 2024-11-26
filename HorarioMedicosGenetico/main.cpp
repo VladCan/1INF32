@@ -20,7 +20,7 @@
 #define NIND 10
 #define Tseleccion 0.3
 #define Pcasamiento 0.5
-#define NITERACIONES 1000
+#define NITERACIONES 10
 #define Tmutacion 0.5
 #define NDias 7
 #define NTurnos 4
@@ -180,6 +180,7 @@ void mutacion(vector<vector<int>>padres, vector<vector<int>>&poblacion, map<int,
         }
    
         poblacion.push_back(padres[cont]);
+        cont++;
     }
 }
 
