@@ -19,8 +19,9 @@
 #include <algorithm>
 #define NIND 15
 #define Tseleccion 0.3
+#define Tcomplemeto 0.2
 #define Pcasamiento 0.5
-#define NITERACIONES 500
+#define NITERACIONES 1000
 #define Tmutacion 0.5
 #define NDias 7
 #define NTurnos 4
@@ -177,15 +178,31 @@ void inversion(vector<vector<int>>&poblacion, vector<vector<int>>padres) {
 
 }
 
+void complemento(vector<vector<int>>&poblacion,
+        vector<vector<int>>padres){
+    
+    
+    
+    for(int i=0;i<padres.size()*Tcomplemeto;i++){
+        for(int j=0;j<padres[i].size();j++){
+                padres[i][j]=abs(padres[i][j]-3);
+        }
+        poblacion.push_back(padres[i]);
+    }
+    
+}
+
 void mutacion(vector<vector<int>>padres, vector<vector<int>>&poblacion, map<int, vector<int>> preferencias) {
     int cont = 0;
     int nmuta = round(padres.size() * Tmutacion);
     while (cont < nmuta) {
-        for (int i = 0; i < NDias; ++i) {
-            if (rand() % 2 == 0) {
+        for (int i = 0; i < NMedicos; ++i) {
                 int pos = rand() % NDias;
+                int pos1 = rand() % NDias;
+                int pos2 = rand() % NDias;
                 padres[cont][i * NDias + pos] = rand() % NTurnos;
-            }
+                padres[cont][i * NDias + pos1] = rand() % NTurnos;
+                padres[cont][i * NDias + pos2] = rand() % NTurnos;
         }
 
         poblacion.push_back(padres[cont]);
@@ -260,17 +277,17 @@ int main(int argc, char** argv) {
         casamiento(padres, poblacion, preferencias);
         cout << endl;
         //cout<<"Mutacion"<<cont<<endl;
-        mutacion(poblacion, padres, preferencias);
-
-        //invercion
         inversion(poblacion, padres);
+        mutacion(poblacion, padres, preferencias);
+        complemento(poblacion,padres);
+        //invercion
         //cout<<"GeneraPoblacion"<<cont<<endl;
         generarpoblacion(poblacion, preferencias);
-        //muestrapoblacion(poblacion,preferencias);
+        muestrapoblacion(poblacion,preferencias);
 
         //cout<<"Merjor"<<cont<<endl;
         muestramejor(poblacion, preferencias);
-        cout<<cont++;
+        //cout<<cont++<<endl;
         if (cont == NITERACIONES) break;
     }
 
