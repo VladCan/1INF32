@@ -21,7 +21,7 @@
 #define Tseleccion 0.3
 #define Tcomplemeto 0.4
 #define Pcasamiento 0.5
-#define NITERACIONES 5000
+#define NITERACIONES 2500
 #define Tmutacion 0.8
 #define NDias 7
 #define NTurnos 4
@@ -254,6 +254,32 @@ int muestramejor(vector<vector<int>> poblacion, map<int, vector<int>> preferenci
     return calculafitness(poblacion[mejor], preferencias);
 }
 
+int compacta(vector<int> cromo){
+    int num=0;
+    
+    for(int i=0;i<cromo.size();i++){
+        num+=cromo[i]*i;
+    }
+    return num;
+}
+
+void emininaRepetidos(vector<vector<int>> &poblacion, map<int, vector<int>> preferencias){
+    map<int,vector<int>> municos;
+    for(int i=0;i<poblacion.size();i++){
+        int num=compacta(poblacion[i]);
+        municos[num]=poblacion[i];
+    }
+    poblacion.clear();
+    for(map<int,vector<int>>::iterator it=municos.begin();
+            it!=municos.end();it++){
+        poblacion.push_back(it->second);
+    }
+       
+
+}
+
+
+
 int main(int argc, char** argv) {
     int cont = 0;
     srand(time(0));
@@ -283,8 +309,11 @@ int main(int argc, char** argv) {
         
         //invercion
         //cout<<"GeneraPoblacion"<<cont<<endl;
+        
+        emininaRepetidos(poblacion,preferencias);
+        
         generarpoblacion(poblacion, preferencias);
-        //muestrapoblacion(poblacion,preferencias);
+        muestrapoblacion(poblacion,preferencias);
 
         //cout<<"Merjor"<<cont<<endl;
         muestramejor(poblacion, preferencias);
