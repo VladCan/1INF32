@@ -278,8 +278,9 @@ int main(int argc, char** argv) {
         cout << endl;
         //cout<<"Mutacion"<<cont<<endl;
         inversion(poblacion, padres);
-        mutacion(poblacion, padres, preferencias);
         complemento(poblacion,padres);
+        mutacion(poblacion, padres, preferencias);
+        
         //invercion
         //cout<<"GeneraPoblacion"<<cont<<endl;
         generarpoblacion(poblacion, preferencias);
