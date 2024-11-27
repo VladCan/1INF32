@@ -19,10 +19,10 @@
 #include <algorithm>
 #define NIND 15
 #define Tseleccion 0.3
-#define Tcomplemeto 0.2
+#define Tcomplemeto 0.4
 #define Pcasamiento 0.5
-#define NITERACIONES 1000
-#define Tmutacion 0.5
+#define NITERACIONES 5000
+#define Tmutacion 0.8
 #define NDias 7
 #define NTurnos 4
 #define NMedicos 4
@@ -199,10 +199,10 @@ void mutacion(vector<vector<int>>padres, vector<vector<int>>&poblacion, map<int,
         for (int i = 0; i < NMedicos; ++i) {
                 int pos = rand() % NDias;
                 int pos1 = rand() % NDias;
-                int pos2 = rand() % NDias;
+                //int pos2 = rand() % NDias;
                 padres[cont][i * NDias + pos] = rand() % NTurnos;
                 padres[cont][i * NDias + pos1] = rand() % NTurnos;
-                padres[cont][i * NDias + pos2] = rand() % NTurnos;
+                //padres[cont][i * NDias + pos2] = rand() % NTurnos;
         }
 
         poblacion.push_back(padres[cont]);
@@ -216,18 +216,18 @@ bool compara(vector<int>a, vector<int>b) {
     //cout<<"Compara"<<endl;
 
     int suma = 0, sumb = 0;
-    /*
+    
     suma+=(calculafitness(a,Gpreferencias)*a.size());
             
     sumb += (calculafitness(b,Gpreferencias)*b.size());
-     */
-
+     
+/*
     for (int i = 0; i < a.size(); i++)
         suma += calculafitness(a, Gpreferencias);
     for (int i = 0; i < b.size(); i++)
         sumb += calculafitness(b, Gpreferencias);
 
-
+*/
     return suma>sumb;
 }
 
@@ -284,11 +284,11 @@ int main(int argc, char** argv) {
         //invercion
         //cout<<"GeneraPoblacion"<<cont<<endl;
         generarpoblacion(poblacion, preferencias);
-        muestrapoblacion(poblacion,preferencias);
+        //muestrapoblacion(poblacion,preferencias);
 
         //cout<<"Merjor"<<cont<<endl;
         muestramejor(poblacion, preferencias);
-        //cout<<cont++<<endl;
+        cout<<cont++<<endl;
         if (cont == NITERACIONES) break;
     }
 
