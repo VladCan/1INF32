@@ -175,7 +175,7 @@ void inversion(vvi &poblacion, vvi padres) {
 void complemento(vvi &poblacion, vvi padres){
     for (int i = 0; i < padres.size() * Tcomplemeto; i++){
         for (int j = 0; j < padres[i].size(); j++){
-            padres[i][j] = abs(padres[i][j] - 3);
+            padres[i][j] = abs(padres[i][j] - (NTurnos-1));
         }
         poblacion.push_back(padres[i]);
     }    
