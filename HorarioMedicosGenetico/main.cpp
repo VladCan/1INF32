@@ -75,17 +75,21 @@ void generaPoblacionInicial (vvi &poblacion) {
 int calculaFitness (vi cromo) {
     int fitness = 0;
     int idMedico = 0;
-    for (int i = NDias; i < cromo.size(); i += NDias) {
-        const auto& horario = vi (cromo.begin() + i + 1, cromo.begin() + i + 8); // Horario del médico
-
+    assert (cromo.size () == NDias * NMedicos);
+    for (int i = 0; i < NMedicos; i ++) {
+        vi horario;
+        for (int j = 0; j < 7; j++)
+            horario.push_back (cromo[i * NDias + j]);
+        assert (horario.size() == NDias);
         // Verificar si el médico tiene preferencias definidas
         if (preferencias.find(idMedico) != preferencias.end()) {
             const auto& pref = preferencias.at(idMedico);
             // Evaluar el horario comparándolo con las preferencias
-            for (int dia = 0; dia < horario.size(); ++dia) 
+            for (int dia = 0; dia < horario.size(); dia++) {
                 // Si el turno asignado coincide con la preferencia, sumar fitness
                 if (horario[dia] == pref[dia]) 
                     fitness += HorarioPerfecto; // Coincidencia exacta define
+            }
         }
         idMedico++;
     }
@@ -206,23 +210,33 @@ bool compara(vi a, vi b) {
     return calculaFitness(a) > calculaFitness(b);
 }
 
-
 void generarPoblacion (vvi &poblacion) {
-    for (int j = 0; j < 15; j++) {
-        vi vaux;
-        for (int i = 0; i < NDias; i++) 
-            vaux.push_back(Random (0, NTurnos - 1));
-        poblacion.push_back (vaux);
-    }
     sort(poblacion.begin(), poblacion.end(), compara);
-    poblacion.erase(poblacion.begin() + NIND, poblacion.end());
+    assert (poblacion.back().size() == NMedicos * NDias);
+    while (poblacion.size() > NIND) poblacion.pop_back();
 }
 
 void muestraMejor (vvi poblacion) {
+    assert (poblacion.size() >= 1);
     cout << endl << "La mejor solucion es: " << calculaFitness(poblacion[0]) << endl;
     for (int i = 0; i < poblacion[0].size(); i++) 
         cout << poblacion[0][i] << "  ";
     cout << endl;
+}
+
+
+void ejecucion (vvi &poblacion, int cont) {
+    vvi padres;
+    seleccion (padres, poblacion);
+    casamiento (padres, poblacion);
+    inversion (poblacion, padres);
+    complemento (poblacion,padres);
+    mutacion (poblacion, padres);
+    eliminaRepetidos (poblacion);
+    generarPoblacion(poblacion);
+    muestraPoblacion (poblacion);
+    muestraMejor (poblacion);
+    cout << cont << endl;
 }
 
 void solve () {
@@ -230,26 +244,12 @@ void solve () {
     vvi poblacion;
     generaPoblacionInicial (poblacion);
     muestraPoblacion (poblacion);
-
-    for (int cont = 0; cont < NITERACIONES; cont++) {
-        vvi padres;
-        seleccion (padres, poblacion);
-        casamiento (padres, poblacion);
-        inversion (poblacion, padres);
-        complemento (poblacion,padres);
-        mutacion (poblacion, padres);
-
-        eliminaRepetidos (poblacion);
-        generarPoblacion(poblacion);
-
-        muestraPoblacion (poblacion);
-        muestraMejor (poblacion);
-        cout << cont << endl;
-    }
+    for (int cont = 0; cont < NITERACIONES; cont++) 
+        ejecucion (poblacion, cont);
 }
 
 int main () {
-    //cin.tie(0)->sync_with_stdio(0);
+    cin.tie(0) -> sync_with_stdio(0);
     solve ();
     return 0;
 }
